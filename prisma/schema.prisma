@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String            @unique
+  createdAt        DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?         @db.Timestamp(6)
+  createdBy        String            @db.Uuid
+  updatedBy        String            @db.Uuid
+  deletedBy        String?           @db.Uuid
+  userCompanyRoles UserCompanyRole[]
+}
+
+model Company {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code             String            @unique
+  name             String
+  createdAt        DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?         @db.Timestamp(6)
+  createdBy        String            @db.Uuid
+  updatedBy        String            @db.Uuid
+  deletedBy        String?           @db.Uuid
+  userCompanyRoles UserCompanyRole[]
+}
+
+model Position {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String            @unique
+  createdAt        DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?         @db.Timestamp(6)
+  createdBy        String            @db.Uuid
+  updatedBy        String            @db.Uuid
+  deletedBy        String?           @db.Uuid
+  userCompanyRoles UserCompanyRole[]
+}
+
+model Country {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+  createdBy String    @db.Uuid
+  updatedBy String    @db.Uuid
+  deletedBy String?   @db.Uuid
+  users     User[]
+}
+
+model Province {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+  createdBy String    @db.Uuid
+  updatedBy String    @db.Uuid
+  deletedBy String?   @db.Uuid
+  users     User[]
+}
+
+model City {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+  createdBy String    @db.Uuid
+  updatedBy String    @db.Uuid
+  deletedBy String?   @db.Uuid
+  users     User[]
+}
+
+model Employee {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String    @unique
+  name      String
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @db.Timestamp(6)
+  createdBy String    @db.Uuid
+  updatedBy String    @db.Uuid
+  deletedBy String?   @db.Uuid
+  user      User?
+}
+
+model User {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username         String            @unique
+  password         String
+  email            String            @unique
+  name             String
+  phone            String
+  address          String
+  countryId        String            @db.Uuid
+  provinceId       String            @db.Uuid
+  cityId           String            @db.Uuid
+  employeeId       String            @unique @db.Uuid
+  country          Country           @relation(fields: [countryId], references: [id])
+  province         Province          @relation(fields: [provinceId], references: [id])
+  city             City              @relation(fields: [cityId], references: [id])
+  createdAt        DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?         @db.Timestamp(6)
+  createdBy        String            @db.Uuid
+  updatedBy        String            @db.Uuid
+  deletedBy        String?           @db.Uuid
+  userCompanyRoles UserCompanyRole[]
+  employee         Employee          @relation(fields: [employeeId], references: [id])
+}
+
+model UserCompanyRole {
+  userId     String    @db.Uuid
+  companyId  String    @db.Uuid
+  positionId String    @db.Uuid
+  roleId     String?   @db.Uuid
+  createdAt  DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime? @db.Timestamp(6)
+  createdBy  String    @db.Uuid
+  updatedBy  String    @db.Uuid
+  deletedBy  String?   @db.Uuid
+
+  user     User     @relation(fields: [userId], references: [id])
+  company  Company  @relation(fields: [companyId], references: [id])
+  position Position @relation(fields: [positionId], references: [id])
+  role     Role?    @relation(fields: [roleId], references: [id])
+
+  @@id([userId, companyId, positionId])
+}
