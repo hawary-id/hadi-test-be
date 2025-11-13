@@ -4,19 +4,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateCompanyDto } from './dto/create-company.dto';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Prisma } from 'generated/prisma/client';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Injectable()
-export class CompaniesService {
+export class EmployeesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateCompanyDto) {
+  async create(dto: CreateEmployeeDto) {
     try {
-      return await this.prisma.company.create({
+      return await this.prisma.employee.create({
         data: {
-          code: dto.code,
           name: dto.name,
         },
         select: {
@@ -31,7 +30,7 @@ export class CompaniesService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new ConflictException('Company name already exists');
+        throw new ConflictException('Employee code already exists');
       }
       throw error;
     }
@@ -41,14 +40,12 @@ export class CompaniesService {
     page = 1,
     limit = 10,
     search?: string,
-    orderByField: keyof Prisma.CompanyOrderByWithRelationInput = 'createdAt',
+    orderByField: keyof Prisma.EmployeeOrderByWithRelationInput = 'createdAt',
     orderDir: 'asc' | 'desc' = 'desc',
   ) {
     const skip = (page - 1) * limit;
 
-    const where: Prisma.CompanyWhereInput = {
-      deletedAt: null,
-    };
+    const where: Prisma.EmployeeWhereInput = { deletedAt: null };
 
     if (search) {
       where.name = {
@@ -57,12 +54,12 @@ export class CompaniesService {
       };
     }
 
-    const orderBy: Prisma.CompanyOrderByWithRelationInput = {
+    const orderBy: Prisma.EmployeeOrderByWithRelationInput = {
       [orderByField]: orderDir,
     };
 
     const [items, total] = await this.prisma.$transaction([
-      this.prisma.company.findMany({
+      this.prisma.employee.findMany({
         skip,
         take: limit,
         where,
@@ -74,7 +71,7 @@ export class CompaniesService {
           createdAt: true,
         },
       }),
-      this.prisma.company.count({ where }),
+      this.prisma.employee.count({ where }),
     ]);
 
     return {
@@ -90,7 +87,7 @@ export class CompaniesService {
   }
 
   findAll() {
-    return this.prisma.company.findMany({
+    return this.prisma.employee.findMany({
       orderBy: { createdAt: 'asc' },
       select: {
         id: true,
@@ -103,7 +100,7 @@ export class CompaniesService {
   }
 
   async findOne(id: string) {
-    const company = await this.prisma.company.findUnique({
+    const employee = await this.prisma.employee.findUnique({
       where: { id: id, deletedAt: null },
       select: {
         id: true,
@@ -113,13 +110,13 @@ export class CompaniesService {
       },
     });
 
-    if (!company) throw new NotFoundException('Company not found');
-    return company;
+    if (!employee) throw new NotFoundException('Employee not found');
+    return employee;
   }
 
-  async update(id: string, dto: UpdateCompanyDto) {
+  async update(id: string, dto: UpdateEmployeeDto) {
     try {
-      const updated = await this.prisma.company.update({
+      const updated = await this.prisma.employee.update({
         where: { id: id },
         data: {
           ...dto,
@@ -135,10 +132,10 @@ export class CompaniesService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
-          throw new NotFoundException('Company not found');
+          throw new NotFoundException('Employee not found');
         }
         if (error.code === 'P2002') {
-          throw new ConflictException('Company code already exists');
+          throw new ConflictException('Employee code already exists');
         }
       }
 
@@ -148,7 +145,7 @@ export class CompaniesService {
 
   async remove(id: string) {
     try {
-      await this.prisma.company.update({
+      await this.prisma.employee.update({
         where: { id: id },
         data: {
           deletedAt: new Date(),
@@ -160,7 +157,7 @@ export class CompaniesService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        throw new NotFoundException('Company not found');
+        throw new NotFoundException('Employee not found');
       }
       throw error;
     }

@@ -43,7 +43,7 @@ export class CountriesService {
   ) {
     const skip = (page - 1) * limit;
 
-    const where: Prisma.CountryWhereInput = {};
+    const where: Prisma.CountryWhereInput = { deletedAt: null };
 
     if (search) {
       where.name = {
@@ -91,12 +91,13 @@ export class CountriesService {
         name: true,
         createdAt: true,
       },
+      where: { deletedAt: null },
     });
   }
 
   async findOne(id: string) {
     const country = await this.prisma.country.findUnique({
-      where: { id: id },
+      where: { id: id, deletedAt: null },
       select: {
         id: true,
         name: true,

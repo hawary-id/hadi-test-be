@@ -16,15 +16,15 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
   ) {}
-  async register(dto: CreateUserDto, userId: string) {
+  async register(dto: CreateUserDto) {
     const hashedPassword = await HashUtil.hash(dto.password);
 
     try {
       const user = await this.prisma.user.create({
         data: {
+          email: dto.email,
           username: dto.username,
           password: hashedPassword,
-          email: dto.email,
           name: dto.name,
           phone: dto.phone,
           address: dto.address,
@@ -32,17 +32,19 @@ export class AuthService {
           provinceId: dto.provinceId,
           cityId: dto.cityId,
           employeeId: dto.employeeId,
-          createdBy: userId,
-          updatedBy: userId,
         },
       });
 
-      const companyIds = dto.companyIds;
+      const items = dto.companyPositions.map((item) => ({
+        userId: user.id,
+        companyId: item.companyId,
+        positionId: item.positionId,
+        createdBy: user.id,
+        updatedBy: user.id,
+      }));
+
       await this.prisma.userCompanyRole.createMany({
-        data: companyIds.map((companyId: string) => ({
-          userId: user.id,
-          companyId,
-        })),
+        data: items,
         skipDuplicates: true,
       });
 
@@ -61,9 +63,25 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { username: dto.username },
-      include: {
-        companyUsers: true,
-        userGroups: true,
+      select: {
+        id: true,
+        username: true,
+        password: true,
+        userCompanyRoles: {
+          select: {
+            company: {
+              select: {
+                code: true,
+                name: true,
+              },
+            },
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -73,8 +91,9 @@ export class AuthService {
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
     const payload = {
-      sub: user.id,
+      id: user.id,
       username: user.username,
+      roleCompanies: user.userCompanyRoles,
     };
 
     const accessToken = await this.jwt.signAsync(payload);

@@ -20,8 +20,8 @@ model Role {
   createdAt        DateTime          @default(now()) @db.Timestamp(6)
   updatedAt        DateTime          @updatedAt
   deletedAt        DateTime?         @db.Timestamp(6)
-  createdBy        String            @db.Uuid
-  updatedBy        String            @db.Uuid
+  createdBy        String?           @db.Uuid
+  updatedBy        String?           @db.Uuid
   deletedBy        String?           @db.Uuid
   userCompanyRoles UserCompanyRole[]
 }
@@ -33,8 +33,8 @@ model Company {
   createdAt        DateTime          @default(now()) @db.Timestamp(6)
   updatedAt        DateTime          @updatedAt
   deletedAt        DateTime?         @db.Timestamp(6)
-  createdBy        String            @db.Uuid
-  updatedBy        String            @db.Uuid
+  createdBy        String?           @db.Uuid
+  updatedBy        String?           @db.Uuid
   deletedBy        String?           @db.Uuid
   userCompanyRoles UserCompanyRole[]
 }
@@ -45,8 +45,8 @@ model Position {
   createdAt        DateTime          @default(now()) @db.Timestamp(6)
   updatedAt        DateTime          @updatedAt
   deletedAt        DateTime?         @db.Timestamp(6)
-  createdBy        String            @db.Uuid
-  updatedBy        String            @db.Uuid
+  createdBy        String?           @db.Uuid
+  updatedBy        String?           @db.Uuid
   deletedBy        String?           @db.Uuid
   userCompanyRoles UserCompanyRole[]
 }
@@ -57,8 +57,8 @@ model Country {
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
-  createdBy String    @db.Uuid
-  updatedBy String    @db.Uuid
+  createdBy String?   @db.Uuid
+  updatedBy String?   @db.Uuid
   deletedBy String?   @db.Uuid
   users     User[]
 }
@@ -69,8 +69,8 @@ model Province {
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
-  createdBy String    @db.Uuid
-  updatedBy String    @db.Uuid
+  createdBy String?   @db.Uuid
+  updatedBy String?   @db.Uuid
   deletedBy String?   @db.Uuid
   users     User[]
 }
@@ -81,21 +81,21 @@ model City {
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
-  createdBy String    @db.Uuid
-  updatedBy String    @db.Uuid
+  createdBy String?   @db.Uuid
+  updatedBy String?   @db.Uuid
   deletedBy String?   @db.Uuid
   users     User[]
 }
 
 model Employee {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code      String    @unique
+  code      String?   @unique
   name      String
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @db.Timestamp(6)
-  createdBy String    @db.Uuid
-  updatedBy String    @db.Uuid
+  createdBy String?   @db.Uuid
+  updatedBy String?   @db.Uuid
   deletedBy String?   @db.Uuid
   user      User?
 }
@@ -116,10 +116,9 @@ model User {
   province         Province          @relation(fields: [provinceId], references: [id])
   city             City              @relation(fields: [cityId], references: [id])
   createdAt        DateTime          @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime          @updatedAt
+  updatedAt        DateTime?         @updatedAt
   deletedAt        DateTime?         @db.Timestamp(6)
-  createdBy        String            @db.Uuid
-  updatedBy        String            @db.Uuid
+  updatedBy        String?           @db.Uuid
   deletedBy        String?           @db.Uuid
   userCompanyRoles UserCompanyRole[]
   employee         Employee          @relation(fields: [employeeId], references: [id])
@@ -133,8 +132,8 @@ model UserCompanyRole {
   createdAt  DateTime  @default(now()) @db.Timestamp(6)
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime? @db.Timestamp(6)
-  createdBy  String    @db.Uuid
-  updatedBy  String    @db.Uuid
+  createdBy  String?   @db.Uuid
+  updatedBy  String?   @db.Uuid
   deletedBy  String?   @db.Uuid
 
   user     User     @relation(fields: [userId], references: [id])

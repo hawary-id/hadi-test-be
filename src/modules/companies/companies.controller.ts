@@ -8,19 +8,30 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiCreatedBaseResponse } from 'src/common/decorators/api-created-base-response.decorator';
 import { CompanyResponseDto } from './dto/company-response.dto';
 import { ApiBaseResponse } from 'src/common/decorators/api-base-response.decorator';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+@ApiTags('Companies')
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
+  @ApiBearerAuth('access_token')
+  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiBody({ type: CreateCompanyDto })
   @ApiCreatedBaseResponse(CreateCompanyDto)
@@ -35,6 +46,8 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
+  @ApiBearerAuth('access_token')
+  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiBaseResponse(CompanyResponseDto)
   @ApiQuery({ name: 'page', required: false, example: 1 })
@@ -60,6 +73,8 @@ export class CompaniesController {
     );
   }
 
+  @ApiBearerAuth('access_token')
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiParam({ name: 'id', example: 'uuid-company-id' })
   @ApiBaseResponse(CompanyResponseDto)
@@ -68,6 +83,8 @@ export class CompaniesController {
     return this.companiesService.findOne(id);
   }
 
+  @ApiBearerAuth('access_token')
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiParam({ name: 'id', example: 'uuid-company-id' })
   @ApiBody({ type: UpdateCompanyDto })
@@ -77,6 +94,8 @@ export class CompaniesController {
     return this.companiesService.update(id, dto);
   }
 
+  @ApiBearerAuth('access_token')
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(204)
   @ApiParam({ name: 'id', example: 'uuid-company-id' })

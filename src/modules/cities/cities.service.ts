@@ -44,7 +44,9 @@ export class CitiesService {
   ) {
     const skip = (page - 1) * limit;
 
-    const where: Prisma.CityWhereInput = {};
+    const where: Prisma.CityWhereInput = {
+      deletedAt: null,
+    };
 
     if (search) {
       where.name = {
@@ -92,12 +94,13 @@ export class CitiesService {
         name: true,
         createdAt: true,
       },
+      where: { deletedAt: null },
     });
   }
 
   async findOne(id: string) {
     const city = await this.prisma.city.findUnique({
-      where: { id: id },
+      where: { id: id, deletedAt: null },
       select: {
         id: true,
         name: true,

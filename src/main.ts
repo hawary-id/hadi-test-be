@@ -21,9 +21,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
 
-  const localIP = '10.57.59.112';
-  // const localIP = '192.168.0.107';
-
   const config = new DocumentBuilder()
     .setTitle('Shop API')
     .setDescription('API Documentation for the shop system')
@@ -37,8 +34,7 @@ async function bootstrap() {
       },
       'access_token',
     )
-    // .addServer('http://localhost:3000', 'Local Environment')
-    .addServer(`http://${localIP}:3000`, 'Local Network')
+    .addServer('http://localhost:3000', 'Local Environment')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

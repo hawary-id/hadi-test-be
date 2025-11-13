@@ -1,0 +1,31 @@
+-- AlterTable
+ALTER TABLE "City" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Company" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Country" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Employee" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Position" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Province" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Role" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "UserCompanyRole" ALTER COLUMN "createdBy" DROP NOT NULL,
+ALTER COLUMN "updatedBy" DROP NOT NULL;

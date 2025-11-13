@@ -16,8 +16,8 @@ export class AuthController {
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedBaseResponse(RegisterResponseDto)
   @ApiResponse({ status: 409, description: 'Username already exists' })
-  register(@Body() dto: CreateUserDto, userId: string) {
-    return this.authService.register(dto, userId);
+  register(@Body() dto: CreateUserDto) {
+    return this.authService.register(dto);
   }
 
   @Post('login')

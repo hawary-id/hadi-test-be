@@ -1,12 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { CompanyPositionDto } from './company-position.dto';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'hadi@mail.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'hadi@mail.com' })
+  @ApiProperty({ example: 'hadi' })
   @IsNotEmpty()
   username: string;
 
@@ -19,21 +28,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: '085775544444' })
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: '' })
+  @ApiProperty({ example: 'Jakarta' })
   @IsNotEmpty()
   address: string;
-
-  @ApiProperty({ example: '' })
-  @IsNotEmpty()
-  postCode: string;
-
-  @ApiProperty({ example: 'uuid-position-id' })
-  @IsNotEmpty()
-  positionId: string;
 
   @ApiProperty({ example: 'uuid-country-id' })
   @IsNotEmpty()
@@ -51,11 +52,18 @@ export class CreateUserDto {
   @IsNotEmpty()
   employeeId: string;
 
-  @ApiProperty({
-    example: ['uuid-company-id', 'uuid-company-id'],
-    isArray: true,
-  })
   @IsArray()
-  @IsNotEmpty()
-  companyIds: string[];
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => CompanyPositionDto)
+  @ApiProperty({
+    type: [CompanyPositionDto],
+    example: [
+      {
+        companyId: 'uuid-company-id',
+        positionId: 'uuid-position-id',
+      },
+    ],
+  })
+  companyPositions: CompanyPositionDto[];
 }

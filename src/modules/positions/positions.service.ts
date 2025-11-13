@@ -44,7 +44,7 @@ export class PositionsService {
   ) {
     const skip = (page - 1) * limit;
 
-    const where: Prisma.PositionWhereInput = {};
+    const where: Prisma.PositionWhereInput = { deletedAt: null };
 
     if (search) {
       where.name = {
@@ -92,12 +92,13 @@ export class PositionsService {
         name: true,
         createdAt: true,
       },
+      where: { deletedAt: null },
     });
   }
 
   async findOne(id: string) {
     const position = await this.prisma.position.findUnique({
-      where: { id: id },
+      where: { id: id, deletedAt: null },
       select: {
         id: true,
         name: true,
